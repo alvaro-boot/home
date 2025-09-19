@@ -61,6 +61,18 @@
       </div>
     </div>
 
+    <!-- Widgets superiores -->
+    <div class="widgets-row">
+      <WeatherWidget />
+      <DateTimeWidget />
+    </div>
+
+    <!-- Panel de acceso rápido y favoritos -->
+    <div class="panels-row">
+      <QuickAccessPanel />
+      <FavoritesPanel />
+    </div>
+
     <!-- Gráficos y contenido principal -->
     <div class="dashboard-content">
       <div class="chart-section">
@@ -124,8 +136,19 @@
 </template>
 
 <script>
+import WeatherWidget from './WeatherWidget.vue'
+import DateTimeWidget from './DateTimeWidget.vue'
+import QuickAccessPanel from './QuickAccessPanel.vue'
+import FavoritesPanel from './FavoritesPanel.vue'
+
 export default {
   name: 'Dashboard',
+  components: {
+    WeatherWidget,
+    DateTimeWidget,
+    QuickAccessPanel,
+    FavoritesPanel
+  },
   data() {
     return {
       selectedPeriod: '30d',
@@ -390,6 +413,20 @@ export default {
   border: 1px solid rgba(220,38,38,0.2);
 }
 
+.widgets-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+  margin-bottom: 30px;
+}
+
+.panels-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  margin-bottom: 30px;
+}
+
 .dashboard-content {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -598,6 +635,14 @@ export default {
 
 @media (max-width: 1024px) {
   .dashboard-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .widgets-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .panels-row {
     grid-template-columns: 1fr;
   }
 }

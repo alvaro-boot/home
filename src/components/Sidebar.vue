@@ -12,6 +12,15 @@
             >
               <i :class="item.icon"></i>
               <span class="nav-text" v-show="!isCollapsed">{{ item.name }}</span>
+              <button 
+                v-if="!isCollapsed && item.id !== 1"
+                @click.stop="toggleFavorite(item)"
+                class="favorite-btn"
+                :class="{ 'favorited': isFavorite(item.id) }"
+                :title="isFavorite(item.id) ? 'Quitar de favoritos' : 'Agregar a favoritos'"
+              >
+                <i class="fas fa-star"></i>
+              </button>
             </a>
           </li>
         </ul>
@@ -28,12 +37,22 @@
 </template>
 
 <script>
+import { useFavorites } from '../composables/useFavorites'
+
 export default {
   name: 'Sidebar',
   props: {
     isCollapsed: {
       type: Boolean,
       default: false
+    }
+  },
+  setup() {
+    const { toggleFavorite, isFavorite } = useFavorites()
+    
+    return {
+      toggleFavorite,
+      isFavorite
     }
   },
   data() {
@@ -44,19 +63,24 @@ export default {
           id: 1,
           name: 'Dashboard',
           path: '/',
-          icon: 'fas fa-tachometer-alt'
+          icon: 'fas fa-tachometer-alt',
+          description: 'Panel principal del sistema'
         },
         {
           id: 2,
           name: 'IT',
           path: '/it',
-          icon: 'fas fa-laptop-code'
+          icon: 'fas fa-laptop-code',
+          description: 'Gestión de tecnología e infraestructura',
+          color: '#4facfe'
         },
         {
           id: 3,
           name: 'Gestión Humana',
           path: '/gestion-humana',
-          icon: 'fas fa-users'
+          icon: 'fas fa-users',
+          description: 'Administración de personal y recursos humanos',
+          color: '#f093fb'
         }
       ]
     }
@@ -124,6 +148,7 @@ export default {
   border-radius: 12px;
   font-weight: 500;
   backdrop-filter: blur(10px);
+  gap: 12px;
 }
 
 .nav-link:hover {
@@ -168,6 +193,40 @@ export default {
   font-weight: 500;
   transition: all 0.3s ease;
   font-size: 15px;
+  flex: 1;
+}
+
+.favorite-btn {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  font-size: 12px;
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.nav-link:hover .favorite-btn {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.favorite-btn:hover {
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.1);
+}
+
+.favorite-btn.favorited {
+  color: #fbbf24;
+  opacity: 1;
+  transform: scale(1);
+}
+
+.favorite-btn.favorited:hover {
+  color: #f59e0b;
 }
 
 .sidebar-collapsed .nav-text {

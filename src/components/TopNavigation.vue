@@ -10,17 +10,49 @@
     <div class="nav-center">
       <div class="search-box">
         <i class="fas fa-search"></i>
-        <input type="text" placeholder="Buscar..." v-model="searchQuery">
+        <input 
+          type="text" 
+          placeholder="Buscar..." 
+          v-model="searchQuery"
+          @keyup.enter="performSearch"
+          @input="onSearchInput"
+        >
+        <div v-if="showSearchSuggestions && searchQuery" class="search-suggestions">
+          <div 
+            v-for="suggestion in searchSuggestions" 
+            :key="suggestion.id"
+            class="suggestion-item"
+            @click="selectSuggestion(suggestion)"
+          >
+            <i :class="suggestion.icon"></i>
+            <span>{{ suggestion.title }}</span>
+          </div>
+        </div>
       </div>
     </div>
     
     <div class="nav-right">
-      <button class="notification-btn">
-        <i class="fas fa-bell"></i>
-        <span class="notification-badge" v-if="notifications > 0">{{ notifications }}</span>
-      </button>
+      <ThemeToggle />
       
-      <div class="user-menu">
+      <div class="notification-container" @click.stop>
+        <button 
+          @click="toggleNotifications" 
+          class="notification-btn"
+          :class="{ 'active': showNotifications }"
+        >
+          <i class="fas fa-bell"></i>
+          <span class="notification-badge" v-if="unreadNotifications > 0">{{ unreadNotifications }}</span>
+        </button>
+        <NotificationDropdown 
+          :is-open="showNotifications"
+          @notification-read="onNotificationRead"
+          @all-notifications-read="onAllNotificationsRead"
+          @notification-deleted="onNotificationDeleted"
+          @view-all-notifications="viewAllNotifications"
+        />
+      </div>
+      
+      <div class="user-menu" @click="toggleUserMenu">
         <div class="user-avatar">
           <i class="fas fa-user"></i>
         </div>
@@ -29,7 +61,7 @@
           <span class="user-role">Administrador</span>
         </div>
         <button class="dropdown-toggle">
-          <i class="fas fa-chevron-down"></i>
+          <i class="fas fa-chevron-down" :class="{ 'rotated': showUserMenu }"></i>
         </button>
       </div>
     </div>
@@ -37,18 +69,87 @@
 </template>
 
 <script>
+import NotificationDropdown from './NotificationDropdown.vue'
+import ThemeToggle from './ThemeToggle.vue'
+
 export default {
   name: 'TopNavigation',
+  components: {
+    NotificationDropdown,
+    ThemeToggle
+  },
   data() {
     return {
       searchQuery: '',
-      notifications: 3
+      showNotifications: false,
+      showUserMenu: false,
+      showSearchSuggestions: false,
+      unreadNotifications: 2,
+      searchSuggestions: [
+        { id: 1, title: 'Dashboard', icon: 'fas fa-tachometer-alt', type: 'page' },
+        { id: 2, title: 'IT Management', icon: 'fas fa-laptop-code', type: 'page' },
+        { id: 3, title: 'Gestión Humana', icon: 'fas fa-users', type: 'page' },
+        { id: 4, title: 'Configuración', icon: 'fas fa-cog', type: 'page' },
+        { id: 5, title: 'Usuarios', icon: 'fas fa-user', type: 'feature' },
+        { id: 6, title: 'Reportes', icon: 'fas fa-chart-bar', type: 'feature' }
+      ]
     }
   },
   methods: {
     toggleSidebar() {
       this.$emit('toggle-sidebar')
+    },
+    toggleNotifications() {
+      this.showNotifications = !this.showNotifications
+      this.showUserMenu = false
+      this.showSearchSuggestions = false
+    },
+    toggleUserMenu() {
+      this.showUserMenu = !this.showUserMenu
+      this.showNotifications = false
+      this.showSearchSuggestions = false
+    },
+    onSearchInput() {
+      this.showSearchSuggestions = this.searchQuery.length > 0
+      this.showNotifications = false
+      this.showUserMenu = false
+    },
+    performSearch() {
+      if (this.searchQuery.trim()) {
+        console.log('Buscando:', this.searchQuery)
+        this.showSearchSuggestions = false
+        // Aquí implementarías la lógica de búsqueda real
+      }
+    },
+    selectSuggestion(suggestion) {
+      this.searchQuery = suggestion.title
+      this.showSearchSuggestions = false
+      console.log('Navegando a:', suggestion)
+      // Aquí implementarías la navegación
+    },
+    onNotificationRead(notificationId) {
+      console.log('Notificación leída:', notificationId)
+      this.unreadNotifications = Math.max(0, this.unreadNotifications - 1)
+    },
+    onAllNotificationsRead() {
+      console.log('Todas las notificaciones leídas')
+      this.unreadNotifications = 0
+    },
+    onNotificationDeleted(notificationId) {
+      console.log('Notificación eliminada:', notificationId)
+    },
+    viewAllNotifications() {
+      console.log('Ver todas las notificaciones')
+      this.showNotifications = false
     }
+  },
+  mounted() {
+    // Cerrar dropdowns al hacer clic fuera
+    document.addEventListener('click', () => {
+      this.showNotifications = false
+      this.showUserMenu = false
+      this.showSearchSuggestions = false
+    })
   }
 }
 </script>
@@ -144,10 +245,59 @@ export default {
   background: white;
 }
 
+.search-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  margin-top: 8px;
+  overflow: hidden;
+  z-index: 1001;
+  border: 1px solid rgba(0,0,0,0.05);
+  animation: slideDown 0.2s ease;
+}
+
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.suggestion-item:hover {
+  background: rgba(102, 126, 234, 0.05);
+}
+
+.suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.suggestion-item i {
+  color: #667eea;
+  width: 16px;
+  text-align: center;
+}
+
+.suggestion-item span {
+  color: #1e293b;
+  font-weight: 500;
+  font-size: 14px;
+}
+
 .nav-right {
   display: flex;
   align-items: center;
   gap: 20px;
+}
+
+.notification-container {
+  position: relative;
 }
 
 .notification-btn {
@@ -165,6 +315,12 @@ export default {
 }
 
 .notification-btn:hover {
+  background: rgba(255,255,255,0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.notification-btn.active {
   background: rgba(255,255,255,0.2);
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(0,0,0,0.15);
@@ -248,6 +404,11 @@ export default {
   border: none;
   color: white;
   cursor: pointer;
+}
+
+.dropdown-toggle i.rotated {
+  transform: rotate(180deg);
+  transition: transform 0.3s ease;
 }
 
 @media (max-width: 768px) {
