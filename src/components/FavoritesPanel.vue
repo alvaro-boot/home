@@ -52,30 +52,48 @@
 </template>
 
 <script>
-import { useFavorites } from '../composables/useFavorites'
-
 export default {
   name: 'FavoritesPanel',
-  setup() {
-    const { 
-      favorites, 
-      favoritesCount, 
-      removeFromFavorites, 
-      clearFavorites 
-    } = useFavorites()
-    
+  data() {
     return {
-      favorites,
-      favoritesCount,
-      removeFromFavorites,
-      clearAllFavorites: clearFavorites
+      favorites: [],
+      favoritesCount: 0
     }
   },
+  mounted() {
+    this.loadFavorites()
+  },
   methods: {
+    loadFavorites() {
+      // Cargar favoritos desde localStorage
+      const stored = localStorage.getItem('favorites')
+      if (stored) {
+        this.favorites = JSON.parse(stored)
+        this.favoritesCount = this.favorites.length
+      }
+    },
+    
+    removeFromFavorites(id) {
+      this.favorites = this.favorites.filter(fav => fav.id !== id)
+      this.favoritesCount = this.favorites.length
+      this.saveFavorites()
+    },
+    
+    clearAllFavorites() {
+      this.favorites = []
+      this.favoritesCount = 0
+      this.saveFavorites()
+    },
+    
+    saveFavorites() {
+      localStorage.setItem('favorites', JSON.stringify(this.favorites))
+    },
+    
     navigateToFavorite(favorite) {
       console.log('Navegando a favorito:', favorite)
       // Aquí implementarías la navegación real
-      this.$router.push(favorite.path)
+      // Por ahora solo mostramos un mensaje
+      alert(`Navegando a ${favorite.name} - En desarrollo`)
     },
     
     formatDate(dateString) {
