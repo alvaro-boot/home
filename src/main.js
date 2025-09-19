@@ -44,9 +44,7 @@ const vueLifecycles = singleSpaVue({
 // Exportar las funciones de ciclo de vida de Single SPA
 export const { bootstrap, mount, unmount } = vueLifecycles
 
-// Para desarrollo independiente
-if (import.meta.env.DEV) {
-  const app = createApp(App)
-  app.use(router)
-  app.mount('#app')
-}
+// Para desarrollo independiente y producción
+const app = createApp(App)
+app.use(router)
+app.mount('#app')
