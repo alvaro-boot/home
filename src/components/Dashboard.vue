@@ -73,6 +73,81 @@
       <FavoritesPanel />
     </div>
 
+    <!-- Sección de módulos principales -->
+    <div class="modules-section">
+      <h2>Módulos Principales</h2>
+      <div class="modules-grid">
+        <div class="module-card" @click="navigateToModule('cartera')">
+          <div class="module-icon cartera">
+            <i class="fas fa-wallet"></i>
+          </div>
+          <div class="module-content">
+            <h3>Cartera</h3>
+            <p>Gestión de cartera y servicios financieros</p>
+            <div class="module-stats">
+              <span class="stat-item">
+                <i class="fas fa-users"></i>
+                <span>1,234 afiliados</span>
+              </span>
+              <span class="stat-item">
+                <i class="fas fa-dollar-sign"></i>
+                <span>$2.5M activos</span>
+              </span>
+            </div>
+          </div>
+          <div class="module-arrow">
+            <i class="fas fa-arrow-right"></i>
+          </div>
+        </div>
+
+        <div class="module-card" @click="navigateToModule('administracion')">
+          <div class="module-icon administracion">
+            <i class="fas fa-building"></i>
+          </div>
+          <div class="module-content">
+            <h3>Administración</h3>
+            <p>Gestión administrativa y operativa</p>
+            <div class="module-stats">
+              <span class="stat-item">
+                <i class="fas fa-file-alt"></i>
+                <span>456 documentos</span>
+              </span>
+              <span class="stat-item">
+                <i class="fas fa-calendar"></i>
+                <span>12 procesos</span>
+              </span>
+            </div>
+          </div>
+          <div class="module-arrow">
+            <i class="fas fa-arrow-right"></i>
+          </div>
+        </div>
+
+        <div class="module-card" @click="navigateToModule('consejo')">
+          <div class="module-icon consejo">
+            <i class="fas fa-gavel"></i>
+          </div>
+          <div class="module-content">
+            <h3>Consejo Administrativo</h3>
+            <p>Gestión del consejo y decisiones corporativas</p>
+            <div class="module-stats">
+              <span class="stat-item">
+                <i class="fas fa-users-cog"></i>
+                <span>7 miembros</span>
+              </span>
+              <span class="stat-item">
+                <i class="fas fa-clipboard-list"></i>
+                <span>23 actas</span>
+              </span>
+            </div>
+          </div>
+          <div class="module-arrow">
+            <i class="fas fa-arrow-right"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Gráficos y contenido principal -->
     <div class="dashboard-content">
       <div class="chart-section">
@@ -190,6 +265,14 @@ export default {
         }
       ]
     }
+  },
+  methods: {
+    navigateToModule(moduleName) {
+      console.log(`Navegando a módulo: ${moduleName}`)
+      // Aquí se implementaría la navegación al módulo correspondiente
+      // Por ahora solo mostramos un mensaje
+      alert(`Módulo ${moduleName} - En desarrollo`)
+    }
   }
 }
 </script>
@@ -197,15 +280,9 @@ export default {
 <style scoped>
 .dashboard {
   padding: 30px;
-  margin-top: 70px;
-  margin-left: 280px;
-  transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-  min-height: calc(100vh - 70px);
-}
-
-.dashboard.sidebar-collapsed {
-  margin-left: 70px;
+  min-height: 100vh;
+  width: 100%;
 }
 
 .dashboard-header {
@@ -427,6 +504,140 @@ export default {
   margin-bottom: 30px;
 }
 
+.modules-section {
+  margin-bottom: 40px;
+}
+
+.modules-section h2 {
+  color: var(--text-primary);
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.modules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 24px;
+}
+
+.module-card {
+  background: var(--bg-primary);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 8px 32px var(--shadow-color);
+  border: 1px solid var(--border-color);
+  backdrop-filter: blur(20px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.module-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.module-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 16px 48px var(--shadow-color);
+}
+
+.module-card:hover::before {
+  opacity: 1;
+}
+
+.module-icon {
+  width: 70px;
+  height: 70px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  color: white;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  flex-shrink: 0;
+}
+
+.module-icon.cartera {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.module-icon.administracion {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.module-icon.consejo {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+}
+
+.module-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.module-content h3 {
+  color: var(--text-primary);
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.module-content p {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin: 0 0 16px 0;
+  line-height: 1.5;
+}
+
+.module-stats {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-tertiary);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.stat-item i {
+  color: var(--accent-primary);
+  font-size: 10px;
+}
+
+.module-arrow {
+  color: var(--text-tertiary);
+  font-size: 16px;
+  transition: all 0.3s ease;
+  opacity: 0;
+  transform: translateX(-10px);
+}
+
+.module-card:hover .module-arrow {
+  opacity: 1;
+  transform: translateX(0);
+  color: var(--accent-primary);
+}
+
 .dashboard-content {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -645,11 +856,24 @@ export default {
   .panels-row {
     grid-template-columns: 1fr;
   }
+  
+  .modules-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .module-card {
+    flex-direction: column;
+    text-align: center;
+    gap: 16px;
+  }
+  
+  .module-stats {
+    justify-content: center;
+  }
 }
 
 @media (max-width: 768px) {
   .dashboard {
-    margin-left: 0;
     padding: 15px;
   }
   
@@ -661,6 +885,20 @@ export default {
   
   .stats-grid {
     grid-template-columns: 1fr;
+  }
+  
+  .modules-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .module-card {
+    padding: 20px;
+  }
+  
+  .module-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
   }
 }
 </style>
